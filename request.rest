@@ -1,0 +1,46 @@
+###
+POST http://localhost:5000/users
+Content-Type: application/json
+Authorization: Bearer 
+
+{
+    "username": "kepala bidang",
+    "namalengkap": "Prasetyo Fajar Islam",
+    "email": "kepalabidang@gmail.com",
+    "password": "123",
+    "confPassword": "123",
+    "jabatan": "kepala bidang spesialis",
+    "satuankerja": "POLDA NTB",
+    "role": "kepala bidang"
+}
+
+###
+POST http://localhost:5000/users
+Content-Type: application/json
+
+{
+    "username": "kepala bidang",
+    "namalengkap": "Prasetyo Fajar Islam",
+    "email": "kepalabidang@gmail.com",
+    "password": "123",
+    "confPassword": "123",
+    "jabatan": "kepala bidang spesialis",
+    "satuankerja": "POLDA NTB",
+    "role": "kepala bidang"
+}
+
+###
+POST http://localhost:5000/login
+Content-Type: application/json
+Authorization: Bearer 
+
+{
+    "username": "kepala bidang",
+    "namalengkap": "Prasetyo Fajar Islam",
+    "email": "kepalabidang@gmail.com",
+    "password": "123",
+    "confPassword": "123",
+    "jabatan": "kepala bidang spesialis",
+    "satuankerja": "POLDA NTB",
+    "role": "kepala bidang"
+}
