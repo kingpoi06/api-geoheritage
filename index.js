@@ -51,8 +51,8 @@ app.use(AuthRoute);
 app.use(TokenRoute);
 
 // 6. Apply middleware verification
-app.use(verifyToken);
-app.use(verifyUser);
+// app.use(verifyToken);
+// app.use(verifyUser);
 
 // 7. Define protected routes
 app.use(UserRoute);
