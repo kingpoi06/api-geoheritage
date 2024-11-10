@@ -1,4 +1,4 @@
-import Galerivideo from "../../models/Galerivideo/GalerivideoModel.js";
+import Galerivideo from "../../models/galerivideo/GalerivideoModel.js";
 import Users from "../../models/UserModel.js";
 // import { Readable } from 'stream';
 // import upload from "../../middleware/multerConfig.js";
