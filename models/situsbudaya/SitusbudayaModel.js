@@ -21,14 +21,14 @@ const Situsbudaya = db.define('situsbudaya', {
         }
     },
     sinopsis:{
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         validate:{
             notEmpty: true
         }
     },
     deskripsilengkap:{
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         validate:{
             notEmpty: true

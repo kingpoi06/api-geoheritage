@@ -21,14 +21,14 @@ const Geoarkeologi = db.define('geoarkeologi', {
         }
     },
     sinopsis:{
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         validate:{
             notEmpty: true
         }
     },
     deskripsilengkap:{
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         validate:{
             notEmpty: true

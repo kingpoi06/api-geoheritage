@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  getSitusbudaya,
+    getSitusbudaya,
 //   getNewsById,
   getSitusbudayaById,
   createSitusbudaya,
