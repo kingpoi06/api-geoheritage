@@ -14,10 +14,10 @@ import { verifyToken, verifyUser } from "../../middleware/verify.js";
 
 const router = express.Router();
 
-router.get("/sosiokultural", getSitusbudaya);
-router.get("/sosiokultural/:uuid", getSitusbudayaById);
+router.get("/situsbudaya", getSitusbudaya);
+router.get("/situsbudaya/:uuid", getSitusbudayaById);
 // router.get("/news/:id", getNewsById);
-router.post("/sosiokultural/upload", verifyToken, verifyUser, adminOnly, upload.single('image'), createSitusbudaya);
+router.post("/situsbudaya/upload", verifyToken, verifyUser, adminOnly, upload.single('image'), createSitusbudaya);
 router.put("/situsbudaya/:uuid", verifyToken, verifyUser, adminOnly, updateSitusbudaya);
 router.delete("/situsbudaya/:uuid", verifyToken, verifyUser, adminOnly, deleteSitusbudaya);
 
