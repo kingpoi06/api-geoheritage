@@ -11,9 +11,11 @@ import TokenRoute from "./routes//login/TokenRoute.js"; // Perbarui import ini
 import NewsRoute from "./routes/news/NewsRoute.js"
 import GaleripotoRoute from "./routes/galeripoto/GaleripotoRoute.js";
 import GalerivideoRoute from "./routes/galerivideo/GalerivideoRoute.js";
+import GeoarkeologiRoute from "./routes/geoarkeologi/GeoarkeologiRoute.js";
+import SosiokulturalRoute from "./routes/sosiokultural/SosiokulturalRoute.js";
+import SitusbudayaRoute from "./routes/situsbudaya/SitusbudayaRoute.js";
+import PetabudayaRoute from "./routes/petabudaya/PetabudayaRoute.js";
 
-
-import { verifyToken, verifyUser } from "./middleware/verify.js";
 
 dotenv.config();
 
@@ -51,8 +53,6 @@ app.use(AuthRoute);
 app.use(TokenRoute);
 
 // 6. Apply middleware verification
-app.use(verifyToken);
-app.use(verifyUser);
 
 // 7. Define protected routes
 app.use(UserRoute);
@@ -60,6 +60,10 @@ app.use(UserRoute);
 app.use(NewsRoute);
 app.use(GaleripotoRoute);
 app.use(GalerivideoRoute);
+app.use(GeoarkeologiRoute);
+app.use(SosiokulturalRoute);
+app.use(SitusbudayaRoute);
+app.use(PetabudayaRoute);
 
 const PORT = process.env.APP_PORT;
 app.listen(PORT, () => {

@@ -1,50 +1,52 @@
-import Galeripoto from "../../models/galeripoto/GaleripotoModel.js";
+import Geoarkeologi from "../../models/geoarkeologi/GeoarkeologiModel.js";
 import Users from "../../models/UserModel.js";
 import { Readable } from 'stream';
 // import upload from "../../middleware/multerConfig.js";
 import cloudinary from "../../middleware/cloudinary.js";
 
-export const getGaleripoto = async (req, res) => {
-  try {
-      const response = await Galeripoto.findAll({
-        attributes: [
-        "id",
-          "uuid",
-          "titleimage",
-          "image",
-          "contentimage",
-          "createdAt",
-        ],
-      });
-      res.status(200).json(response);
-    } catch (error) {
-      res.status(500).json({ msg: error.message });
-    }
-};
-
-export const getGaleripotoById = async (req, res) => {
-  try {
-      const response = await Galeripoto.findOne({
-        attributes: [
+export const getGeoarkeologi = async (req, res) => {
+    try {
+        const response = await Geoarkeologi.findAll({
+          attributes: [
           "id",
           "uuid",
-          "titleimage",
+          "title",
+          "sinopsis",
+          "deskripsilengkap",
           "image",
-          "contentimage",
           "createdAt",
-      ],
-        where: {
-          id: req.params.uuid,
-        },
-      });
-      res.status(200).json(response);
-    } catch (error) {
-      res.status(500).json({ msg: error.message });
-    }
+          ],
+        });
+        res.status(200).json(response);
+      } catch (error) {
+        res.status(500).json({ msg: error.message });
+      }
 };
 
-export const createGaleripoto = async (req, res) => {
-    const { titleimage, contentimage } = req.body;
+export const getGeoarkeologiById = async (req, res) => {
+    try {
+        const response = await Geoarkeologi.findOne({
+          attributes: [
+          "id",
+          "uuid",
+          "title",
+          "sinopsis",
+          "deskripsilengkap",
+          "image",
+          "createdAt",
+        ],
+          where: {
+            id: req.params.uuid,
+          },
+        });
+        res.status(200).json(response);
+      } catch (error) {
+        res.status(500).json({ msg: error.message });
+      }
+};
+
+export const createGeoarkeologi = async (req, res) => {
+    const { title, sinopsis, deskripsilengkap } = req.body;
   
     try {
       if (!req.file) {
@@ -53,7 +55,7 @@ export const createGaleripoto = async (req, res) => {
   
       // Unggah gambar ke Cloudinary
       const uploadStream = cloudinary.uploader.upload_stream(
-        { folder: 'galeripoto_images' },
+        { folder: 'geoarkeologi_images' },
         async (err, result) => {
           if (err) {
             console.error("Error uploading to Cloudinary:", err);
@@ -62,14 +64,15 @@ export const createGaleripoto = async (req, res) => {
   
           const imageUrl = result.secure_url;
   
-          await Galeripoto.create({
-            titleimage: titleimage,
+          await Geoarkeologi.create({
+            title: title,
             image: imageUrl,  
-            contentimage: contentimage,
+            sinopsis: sinopsis,
+            deskripsilengkap: deskripsilengkap,
             userId: req.userDbId,
           });
   
-          res.status(201).json({ msg: "Data Galeri Poto Berhasil Ditambahkan!", imageUrl: imageUrl });
+          res.status(201).json({ msg: "Data Geoarkeologi Berhasil Ditambahkan!", imageUrl: imageUrl });
         }
       );
   
@@ -80,30 +83,30 @@ export const createGaleripoto = async (req, res) => {
       bufferStream.pipe(uploadStream);
   
     } catch (error) {
-      console.error("Error creating Galeri Poto:", error);
+      console.error("Error creating Geoarkeologi:", error);
       res.status(500).json({ msg: error.message });
     }
   };
 
-export const updateGaleripoto = async (req, res) => {
+export const updateGeoarkeologi = async (req, res) => {
     try {
-        const galeripoto = await Galeripoto.findOne({
+        const geoarkeologi = await Geoarkeologi.findOne({
           where: { id: req.params.uuid },
         });
-        if (!galeripoto) return res.status(404).json({ msg: "Data tidak ditemukan!" });
+        if (!geoarkeologi) return res.status(404).json({ msg: "Data tidak ditemukan!" });
     
         const { titleimage, contentimage } = req.body;
-        let imageUrl = galeripoto.image;
+        let imageUrl = geoarkeologi.image;
     
         // Cek jika ada file gambar baru yang diunggah
         if (req.file) {
           // Hapus gambar lama dari Cloudinary
-          const publicId = galeripoto.image.split('/').pop().split('.')[0];
+          const publicId = geoarkeologi.image.split('/').pop().split('.')[0];
           await cloudinary.uploader.destroy(publicId);
     
           // Unggah gambar baru ke Cloudinary
           const uploadStream = cloudinary.uploader.upload_stream(
-            { folder: 'galeripoto_images' },
+            { folder: 'geoarkeologi_images' },
             (err, result) => {
               if (err) {
                 console.error("Error uploading to Cloudinary:", err);
@@ -121,42 +124,42 @@ export const updateGaleripoto = async (req, res) => {
     
         // Update data Galeri poto di database
         const updateData = { titleimage, image: imageUrl, contentimage };
-        const condition = req.role === "admin" ? { id: galeripoto.id } : { [Op.and]: [{ id: galeripoto.id }, { userId: req.userId }] };
+        const condition = req.role === "admin" ? { id: geoarkeologi.id } : { [Op.and]: [{ id: geoarkeologi.id }, { userId: req.userId }] };
     
-        await Galeripoto.update(updateData, { where: condition });
-        res.status(200).json({ msg: "Data Galeri poto berhasil diperbaharui!" });
+        await Geoarkeologi.update(updateData, { where: condition });
+        res.status(200).json({ msg: "Data Geoarkeologi berhasil diperbaharui!" });
         
       } catch (error) {
-        console.error("Error updating Galeri Poto:", error);
+        console.error("Error updating Geoarkeologi:", error);
         res.status(500).json({ msg: error.message });
       }
     };
 
-export const deleteGaleripoto = async (req, res) => {
+export const deleteGeoarkeologi = async (req, res) => {
   try {
-    const galeripoto = await Galeripoto.findOne({
+    const geoarkeologi = await Geoarkeologi.findOne({
       where: {
         id: req.params.uuid,
       },
     });
-    if (!galeripoto) return res.status(404).json({ msg: "Data not found!" });
-    const { titleimage, image, contentimage } = req.body;
+    if (!geoarkeologi) return res.status(404).json({ msg: "Data not found!" });
+    const { title, sinopsis, deskripsilengkap, image } = req.body;
     if (req.role === "admin") {
-      await Galeripoto.destroy({
+      await Geoarkeologi.destroy({
         where: {
-          id: galeripoto.id,
+          id: geoarkeologi.id,
         },
       });
     } else {
-      if (req.userId !== galeripoto.userId)
+      if (req.userId !== geoarkeologi.userId)
         return res.status(403).json({ msg: "Akses terlarang" });
-      await Galeripoto.destroy({
+      await Geoarkeologi.destroy({
         where: {
-          [Op.and]: [{ id: galeripoto.id }, { userId: req.userId }],
+          [Op.and]: [{ id: geoarkeologi.id }, { userId: req.userId }],
         },
       });
     }
-    res.status(200).json({ msg: "Data Galeri Poto berhasil dihapus!" });
+    res.status(200).json({ msg: "Data Geoarkeologi berhasil dihapus!" });
   } catch (error) {
     res.status(500).json({ msg: error.message });
   }

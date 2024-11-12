@@ -4,13 +4,12 @@ import { Readable } from 'stream';
 // import upload from "../../middleware/multerConfig.js";
 import cloudinary from "../../middleware/cloudinary.js";
 
+
 export const getNews = async (req, res) => {
   try {
-    let response;
-    if (req.role === "admin") {
-      response = await News.findAll({
+      const response = await News.findAll({
         attributes: [
-          "id",
+        "id",
           "uuid",
           "author",
           "kategori",
@@ -20,56 +19,18 @@ export const getNews = async (req, res) => {
           "content",
           "createdAt",
         ],
-        include: [
-          {
-            model: Users,
-            attributes: ["username"],
-          },
-        ],
       });
-    } else {
-      response = await News.findAll({
-        attributes: [
-          "uuid",
-          "author",
-          "kategori",
-          "tags",
-          "title",
-          "image",
-          "content",
-          "createdAt",
-        ],
-        where: {
-          userId: req.userId,
-        },
-        include: [
-          {
-            model: Users,
-            attributes: ["username"],
-          },
-        ],
-      });
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({ msg: error.message });
     }
-    res.status(200).json(response);
-    console.log("List Data News: ", response);
-  } catch (error) {
-    res.status(500).json({ msg: error.message });
-  }
 };
 
 export const getNewsByUuid = async (req, res) => {
   try {
-    const news = await News.findOne({
-      where: {
-        id: req.params.uuid,
-      },
-    });
-    if (!news) return res.status(404).json({ msg: "Data tidak ditemukan!" });
-    let response;
-    if (req.role === "admin") {
-      response = await News.findOne({
+      const response = await News.findOne({
         attributes: [
-          "id",
+        "id",
           "uuid",
           "author",
           "kategori",
@@ -78,46 +39,15 @@ export const getNewsByUuid = async (req, res) => {
           "image",
           "content",
           "createdAt",
-        ],
+      ],
         where: {
-          id: news.id,
+          id: req.params.uuid,
         },
-        include: [
-          {
-            model: Users,
-            attributes: ["username"],
-          },
-        ],
       });
-    } else {
-      response = await News.findOne({
-        attributes: [
-          "id",
-          "uuid",
-          "author",
-          "kategori",
-          "tags",
-          "title",
-          "image",
-          "content",
-          "createdAt",
-        ],
-        where: {
-          [Op.and]: [{ id: news.id }, { userId: req.userId }],
-        },
-        include: [
-          {
-            model: Users,
-            attributes: ["username"],
-          },
-        ],
-      });
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({ msg: error.message });
     }
-    res.status(200).json(response);
-    console.log("List Data News: ", response);
-  } catch (error) {
-    res.status(500).json({ msg: error.message });
-  }
 };
 
 

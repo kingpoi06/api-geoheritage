@@ -6,107 +6,41 @@ import Users from "../../models/UserModel.js";
 
 export const getGalerivideo = async (req, res) => {
   try {
-    let response;
-    if (req.role === "admin") {
-      response = await Galerivideo.findAll({
+      const response = await Galerivideo.findAll({
         attributes: [
-          "id",
+        "id",
           "uuid",
           "titlevideo",
-          "image",
-          "contentimage",
+          "video",
+          "contentvideo",
           "createdAt",
         ],
-        include: [
-          {
-            model: Users,
-            attributes: ["username"],
-          },
-        ],
       });
-    } else {
-      response = await Galerivideo.findAll({
-        attributes: [
-          "id",
-          "uuid",
-          "titleimage",
-          "image",
-          "contentimage",
-          "createdAt",
-        ],
-        where: {
-          userId: req.userId,
-        },
-        include: [
-          {
-            model: Users,
-            attributes: ["username"],
-          },
-        ],
-      });
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({ msg: error.message });
     }
-    res.status(200).json(response);
-    console.log("List Data Galeri Video: ", response);
-  } catch (error) {
-    res.status(500).json({ msg: error.message });
-  }
 };
 
 export const getGalerivideoById = async (req, res) => {
   try {
-    const galerivideo = await Galerivideo.findOne({
-      where: {
-        id: req.params.uuid,
-      },
-    });
-    if (!galerivideo) return res.status(404).json({ msg: "Data tidak ditemukan!" });
-    let response;
-    if (req.role === "admin") {
-      response = await galerivideo.findOne({
+      const response = await Galerivideo.findOne({
         attributes: [
           "id",
           "uuid",
-          "titleimage",
-          "image",
-          "contentimage",
+          "titlevideo",
+          "video",
+          "contentvideo",
           "createdAt",
-        ],
+      ],
         where: {
-          id: galerivideo.id,
+          id: req.params.uuid,
         },
-        include: [
-          {
-            model: Users,
-            attributes: ["username"],
-          },
-        ],
       });
-    } else {
-      response = await Galerivideo.findOne({
-        attributes: [
-          "id",
-          "uuid",
-          "titleimage",
-          "image",
-          "contentimage",
-          "createdAt",
-        ],
-        where: {
-          [Op.and]: [{ id: galerivideo.id }, { userId: req.userId }],
-        },
-        include: [
-          {
-            model: Users,
-            attributes: ["username"],
-          },
-        ],
-      });
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({ msg: error.message });
     }
-    res.status(200).json(response);
-    console.log("List Data Galeri Video: ", response);
-  } catch (error) {
-    res.status(500).json({ msg: error.message });
-  }
 };
 
 export const createGalerivideo = async (req, res) => {
