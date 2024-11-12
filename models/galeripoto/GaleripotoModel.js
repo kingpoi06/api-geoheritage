@@ -27,7 +27,7 @@ const Galeripoto = db.define('galeripoto', {
             notEmpty: true
         }
     },
-    contentimage:{
+    kategori:{
         type: DataTypes.STRING,
         allowNull: false,
         validate:{

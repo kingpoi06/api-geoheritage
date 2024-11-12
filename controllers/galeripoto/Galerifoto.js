@@ -12,7 +12,7 @@ export const getGaleripoto = async (req, res) => {
           "uuid",
           "titleimage",
           "image",
-          "contentimage",
+          "kategori",
           "createdAt",
         ],
       });
@@ -30,7 +30,7 @@ export const getGaleripotoById = async (req, res) => {
           "uuid",
           "titleimage",
           "image",
-          "contentimage",
+          "kategori",
           "createdAt",
       ],
         where: {

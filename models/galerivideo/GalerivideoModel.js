@@ -27,7 +27,7 @@ const Galerivideo = db.define('galerivideo', {
             notEmpty: true
         }
     },
-    contentvideo:{
+    kategori:{
         type: DataTypes.STRING,
         allowNull: false,
         validate:{
