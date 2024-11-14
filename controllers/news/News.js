@@ -101,7 +101,7 @@ export const createNews = async (req, res) => {
 export const updateNews = async (req, res) => {
   try {
     const news = await News.findOne({
-      where: { getNewsByUuid: req.params.uuid },
+      where: { id: req.params.uuid },
     });
     if (!news) return res.status(404).json({ msg: "Data tidak ditemukan!" });
 
