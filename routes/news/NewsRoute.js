@@ -19,7 +19,7 @@ router.get("/news", getNews);
 router.get("/news/:uuid", getNewsByUuid);
 // router.get("/news/:id", getNewsById);
 router.post("/news/upload", verifyToken, verifyUser, adminOnly, upload.single('image'), createNews);
-router.put("/news/:uuid", verifyToken, verifyUser, adminOnly, updateNews);
+router.news("/news/:uuid", verifyToken, verifyUser, adminOnly, updateNews);
 router.delete("/news/:uuid", verifyToken, verifyUser, adminOnly, deleteNews);
 
 export default router;
