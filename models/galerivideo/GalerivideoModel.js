@@ -20,7 +20,14 @@ const Galerivideo = db.define('galerivideo', {
             notEmpty: true
         }
     },
-    video:{
+    image:{
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate:{
+            notEmpty: true
+        }
+    },
+    urlvideo:{
         type: DataTypes.STRING,
         allowNull: false,
         validate:{

@@ -85,35 +85,39 @@ export const deleteLogout = async (req, res) => {
   try {
     const { refreshToken } = req.body;
 
+    // Periksa apakah refresh token tersedia
     if (!refreshToken) {
-      return res.sendStatus(401); // Unauthorized
+      return res.status(401).json({ msg: "Refresh token is required" }); // Unauthorized
     }
 
-    const decodedToken = jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET
-    );
+    // Verifikasi token
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    } catch (err) {
+      console.error("Invalid refresh token:", err);
+      return res.status(403).json({ msg: "Invalid refresh token" }); // Forbidden
+    }
 
+    // Cari user berdasarkan UUID dan token refresh yang dikirim
     const user = await Users.findOne({
       where: {
         uuid: decodedToken.uuid,
-        jwt_token: refreshToken,
+        jwt_token: refreshToken, // Cocokkan dengan token yang tersimpan
       },
     });
 
     if (!user) {
-      return res.sendStatus(404); // Not Found
+      return res.status(404).json({ msg: "User not found" }); // Not Found
     }
 
+    // Hapus token refresh dari database
     await Users.update(
-      { jwt_token: null },
-      {
-        where: {
-          uuid: decodedToken.uuid,
-        },
-      }
+      { jwt_token: null }, // Set token refresh menjadi null
+      { where: { uuid: user.uuid } }
     );
 
+    // Berikan respons sukses
     res.status(200).json({ msg: "Successfully logged out" });
   } catch (error) {
     console.error("Error during logout:", error);

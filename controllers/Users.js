@@ -93,6 +93,7 @@ export const updateUser = async (req, res) => {
     res.status(400).json({ msg: error.message });
   }
 };
+
 export const deleteUser = async (req, res) => {
   const user = await Users.findOne({
     where: {

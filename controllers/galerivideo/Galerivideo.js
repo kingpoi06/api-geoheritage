@@ -8,10 +8,11 @@ export const getGalerivideo = async (req, res) => {
   try {
       const response = await Galerivideo.findAll({
         attributes: [
-        "id",
+          "id",
           "uuid",
           "titlevideo",
-          "video",
+          "image",
+          "urlvideo",
           "kategori",
           "createdAt",
         ],
@@ -29,7 +30,8 @@ export const getGalerivideoById = async (req, res) => {
           "id",
           "uuid",
           "titlevideo",
-          "video",
+          "image",
+          "urlvideo",
           "kategori",
           "createdAt",
       ],
@@ -44,56 +46,91 @@ export const getGalerivideoById = async (req, res) => {
 };
 
 export const createGalerivideo = async (req, res) => {
-    const { titlevideo, video, kategori } = req.body;
-    try {
-      if (!titlevideo || !video || !kategori) {
-        return res.status(400).json({ msg: "Field titlevideo, video, dan kategori wajib diisi!" });
-      }
-      await Galerivideo.create({
-        titlevideo: titlevideo,
-        video: video,
-        kategori: kategori,
-        userId: req.userDbId,
-      });
-      res.status(201).json({ msg: "Data Galeri video Berhasil Ditambahkan!" });
-    } catch (error) {
-      console.error("Error creating Galeri video:", error);
-      res.status(500).json({ msg: error.message });
+  const { titlevideo, kategori, urlvideo } = req.body;
+  
+  try {
+    if (!req.file) {
+      return res.status(400).json({ msg: 'File gambar wajib diunggah' });
     }
-  };
+
+    // Unggah gambar ke Cloudinary
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: 'galerivideo_images' },
+      async (err, result) => {
+        if (err) {
+          console.error("Error uploading to Cloudinary:", err);
+          return res.status(500).json({ success: false, message: "Error uploading to Cloudinary" });
+        }
+
+        const imageUrl = result.secure_url;
+
+        await Galerivideo.create({
+          titlevideo: titlevideo,
+          image: imageUrl,  
+          kategori: kategori,
+          urlvideo: urlvideo,
+          userId: req.userDbId,
+        });
+
+        res.status(201).json({ msg: "Data Galeri Video Berhasil Ditambahkan!", imageUrl: imageUrl });
+      }
+    );
+
+    // Mengalirkan buffer file ke Cloudinary
+    const bufferStream = new Readable();
+    bufferStream.push(req.file.buffer);
+    bufferStream.push(null);
+    bufferStream.pipe(uploadStream);
+
+  } catch (error) {
+    console.error("Error creating Galeri Video:", error);
+    res.status(500).json({ msg: error.message });
+  }
+};
 
   export const updateGalerivideo = async (req, res) => {
     try {
       const galerivideo = await Galerivideo.findOne({
-        where: {
-          id: req.params.uuid,
-        },
+        where: { id: req.params.uuid },
       });
-      if (!galerivideo) return res.status(404).json({ msg: "Data not found!" });
-      const { titlevideo, video, kategori } = req.body;
-      if (req.role === "admin") {
-        await Galerivideo.update(
-          { titlevideo, video, kategori },
-          {
-            where: {
-              id: galerivideo.id,
-            },
+      if (!galerivideo) return res.status(404).json({ msg: "Data tidak ditemukan!" });
+  
+      const { titlevideo, kategori, urlvideo } = req.body;
+      let imageUrl = galerivideo.image;
+  
+      // Cek jika ada file gambar baru yang diunggah
+      if (req.file) {
+        // Hapus gambar lama dari Cloudinary
+        const publicId = galerivideo.image.split('/').pop().split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+  
+        // Unggah gambar baru ke Cloudinary
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: 'galerivideo_images' },
+          (err, result) => {
+            if (err) {
+              console.error("Error uploading to Cloudinary:", err);
+              return res.status(500).json({ success: false, message: "Error uploading to Cloudinary" });
+            }
+            imageUrl = result.secure_url;
           }
         );
-      } else {
-        if (req.userId !== galerivideo.userId)
-          return res.status(403).json({ msg: "Access X" });
-        await Galerivideo.update(
-          { titlevideo, video, kategori },
-          {
-            where: {
-              [Op.and]: [{ id: galerivideo.id }, { userId: req.userId }],
-            },
-          }
-        );
+  
+        const bufferStream = new Readable();
+        bufferStream.push(req.file.buffer);
+        bufferStream.push(null);
+        bufferStream.pipe(uploadStream);
       }
-      res.status(200).json({ msg: "Data Galeri Video berhasil di perbaharui!" });
+  
+      // Update data Galeri poto di database
+      const updateData = { titlevideo, image: imageUrl, kategori, urlvideo };
+      const condition = req.role === "admin" ? { id: galerivideo.id } : { [Op.and]: [{ id: galerivideo.id }, { userId: req.userId }] };
+  
+      await Galerivideo.update(updateData, { where: condition });
+      res.status(200).json({ msg: "Data Galeri Video berhasil diperbaharui!" });
+      
     } catch (error) {
+      console.error("Error updating Galeri Video:", error);
       res.status(500).json({ msg: error.message });
     }
   };

@@ -15,9 +15,9 @@ import { verifyToken, verifyUser } from "../../middleware/verify.js";
 const router = express.Router();
 
 router.get("/galerivideo", getGalerivideo);
-router.get("/galerivideo/:id", getGalerivideoById);
+router.get("/galerivideo/:uuid", getGalerivideoById);
 router.post("/galerivideo/upload", verifyToken, verifyUser, adminOnly, createGalerivideo);
-router.patch("/galerivideo/:id", verifyToken, verifyUser, adminOnly, updateGalerivideo);
-router.delete("/galerivideo/:id", verifyToken, verifyUser, adminOnly, deletegalerivideo);
+router.patch("/galerivideo/:uuid", verifyToken, verifyUser, adminOnly, updateGalerivideo);
+router.delete("/galerivideo/:uuid", verifyToken, verifyUser, adminOnly, deletegalerivideo);
 
 export default router;
