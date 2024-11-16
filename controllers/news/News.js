@@ -145,6 +145,43 @@ export const updateNews = async (req, res) => {
   }
 };
 
+// export const updateNews = async (req, res) => {
+//   try {
+//     const galerivideo = await News.findOne({
+//       where: {
+//         id: req.params.uuid,
+//       },
+//     });
+//     if (!galerivideo) return res.status(404).json({ msg: "Data not found!" });
+//     const { author, kategori, tags, title, image: imageUrl, content } = req.body;
+//     if (req.role === "admin") {
+//       await News.update(
+//         { author, kategori, tags, title, image: imageUrl, content },
+//         {
+//           where: {
+//             id: galerivideo.id,
+//           },
+//         }
+//       );
+//     } else {
+//       if (req.userId !== galerivideo.userId)
+//         return res.status(403).json({ msg: "Access X" });
+//       await News.update(
+//         { author, kategori, tags, title, image: imageUrl, content },
+//         {
+//           where: {
+//             [Op.and]: [{ id: galerivideo.id }, { userId: req.userId }],
+//           },
+//         }
+//       );
+//     }
+//     res.status(200).json({ msg: "Data News berhasil di perbaharui!" });
+//   } catch (error) {
+//     res.status(500).json({ msg: error.message });
+//   }
+//   };
+
+
 export const deleteNews = async (req, res) => {
   try {
     const news = await News.findOne({

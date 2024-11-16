@@ -12,7 +12,7 @@ export const getGalerivideo = async (req, res) => {
           "uuid",
           "titlevideo",
           "video",
-          "contentvideo",
+          "kategori",
           "createdAt",
         ],
       });
@@ -30,7 +30,7 @@ export const getGalerivideoById = async (req, res) => {
           "uuid",
           "titlevideo",
           "video",
-          "contentvideo",
+          "kategori",
           "createdAt",
       ],
         where: {
@@ -44,12 +44,15 @@ export const getGalerivideoById = async (req, res) => {
 };
 
 export const createGalerivideo = async (req, res) => {
-    const { titlevideo, video, contentvideo } = req.body;
+    const { titlevideo, video, kategori } = req.body;
     try {
+      if (!titlevideo || !video || !kategori) {
+        return res.status(400).json({ msg: "Field titlevideo, video, dan kategori wajib diisi!" });
+      }
       await Galerivideo.create({
         titlevideo: titlevideo,
         video: video,
-        contentvideo: contentvideo,
+        kategori: kategori,
         userId: req.userDbId,
       });
       res.status(201).json({ msg: "Data Galeri video Berhasil Ditambahkan!" });
@@ -67,10 +70,10 @@ export const createGalerivideo = async (req, res) => {
         },
       });
       if (!galerivideo) return res.status(404).json({ msg: "Data not found!" });
-      const { titlevideo, video, contentvideo } = req.body;
+      const { titlevideo, video, kategori } = req.body;
       if (req.role === "admin") {
         await Galerivideo.update(
-          { titlevideo, video, contentvideo },
+          { titlevideo, video, kategori },
           {
             where: {
               id: galerivideo.id,
@@ -81,7 +84,7 @@ export const createGalerivideo = async (req, res) => {
         if (req.userId !== galerivideo.userId)
           return res.status(403).json({ msg: "Access X" });
         await Galerivideo.update(
-          { titlevideo, video, contentvideo },
+          { titlevideo, video, kategori },
           {
             where: {
               [Op.and]: [{ id: galerivideo.id }, { userId: req.userId }],
@@ -103,7 +106,7 @@ export const deletegalerivideo = async (req, res) => {
       },
     });
     if (!galerivideo) return res.status(404).json({ msg: "Data not found!" });
-    const { titlevideo, video, contentvideo } = req.body;
+    const { titlevideo, video, kategori } = req.body;
     if (req.role === "admin") {
       await Galerivideo.destroy({
         where: {

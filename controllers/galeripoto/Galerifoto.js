@@ -44,7 +44,7 @@ export const getGaleripotoById = async (req, res) => {
 };
 
 export const createGaleripoto = async (req, res) => {
-    const { titleimage, contentimage } = req.body;
+    const { titleimage, kategori } = req.body;
   
     try {
       if (!req.file) {
@@ -65,7 +65,7 @@ export const createGaleripoto = async (req, res) => {
           await Galeripoto.create({
             titleimage: titleimage,
             image: imageUrl,  
-            contentimage: contentimage,
+            kategori: kategori,
             userId: req.userDbId,
           });
   
@@ -92,7 +92,7 @@ export const updateGaleripoto = async (req, res) => {
         });
         if (!galeripoto) return res.status(404).json({ msg: "Data tidak ditemukan!" });
     
-        const { titleimage, contentimage } = req.body;
+        const { titleimage, kategori } = req.body;
         let imageUrl = galeripoto.image;
     
         // Cek jika ada file gambar baru yang diunggah
@@ -120,7 +120,7 @@ export const updateGaleripoto = async (req, res) => {
         }
     
         // Update data Galeri poto di database
-        const updateData = { titleimage, image: imageUrl, contentimage };
+        const updateData = { titleimage, image: imageUrl, kategori };
         const condition = req.role === "admin" ? { id: galeripoto.id } : { [Op.and]: [{ id: galeripoto.id }, { userId: req.userId }] };
     
         await Galeripoto.update(updateData, { where: condition });
@@ -140,7 +140,7 @@ export const deleteGaleripoto = async (req, res) => {
       },
     });
     if (!galeripoto) return res.status(404).json({ msg: "Data not found!" });
-    const { titleimage, image, contentimage } = req.body;
+    const { titleimage, image, kategori } = req.body;
     if (req.role === "admin") {
       await Galeripoto.destroy({
         where: {
