@@ -1,8 +1,8 @@
 import Galerivideo from "../../models/galerivideo/GalerivideoModel.js";
 import Users from "../../models/UserModel.js";
-// import { Readable } from 'stream';
+import { Readable } from 'stream';
 // import upload from "../../middleware/multerConfig.js";
-// import cloudinary from "../../middleware/cloudinary.js";
+import cloudinary from "../../middleware/cloudinary.js";
 
 export const getGalerivideo = async (req, res) => {
   try {
@@ -48,45 +48,45 @@ export const getGalerivideoById = async (req, res) => {
 export const createGalerivideo = async (req, res) => {
   const { titlevideo, kategori, urlvideo } = req.body;
   
-  try {
-    if (!req.file) {
-      return res.status(400).json({ msg: 'File gambar wajib diunggah' });
-    }
-
-    // Unggah gambar ke Cloudinary
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: 'galerivideo_images' },
-      async (err, result) => {
-        if (err) {
-          console.error("Error uploading to Cloudinary:", err);
-          return res.status(500).json({ success: false, message: "Error uploading to Cloudinary" });
-        }
-
-        const imageUrl = result.secure_url;
-
-        await Galerivideo.create({
-          titlevideo: titlevideo,
-          image: imageUrl,  
-          kategori: kategori,
-          urlvideo: urlvideo,
-          userId: req.userDbId,
-        });
-
-        res.status(201).json({ msg: "Data Galeri Video Berhasil Ditambahkan!", imageUrl: imageUrl });
+    try {
+      if (!req.file) {
+        return res.status(400).json({ msg: 'File gambar wajib diunggah' });
       }
-    );
-
-    // Mengalirkan buffer file ke Cloudinary
-    const bufferStream = new Readable();
-    bufferStream.push(req.file.buffer);
-    bufferStream.push(null);
-    bufferStream.pipe(uploadStream);
-
-  } catch (error) {
-    console.error("Error creating Galeri Video:", error);
-    res.status(500).json({ msg: error.message });
-  }
-};
+  
+      // Unggah gambar ke Cloudinary
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: 'galeripoto_images' },
+        async (err, result) => {
+          if (err) {
+            console.error("Error uploading to Cloudinary:", err);
+            return res.status(500).json({ success: false, message: "Error uploading to Cloudinary" });
+          }
+  
+          const imageUrl = result.secure_url;
+  
+          await Galerivideo.create({
+            titlevideo: titlevideo,
+            image: imageUrl,  
+            kategori: kategori,
+            urlvideo: urlvideo,
+            userId: req.userDbId,
+          });
+  
+          res.status(201).json({ msg: "Data Galeri Video Berhasil Ditambahkan!", imageUrl: imageUrl });
+        }
+      );
+  
+      // Mengalirkan buffer file ke Cloudinary
+      const bufferStream = new Readable();
+      bufferStream.push(req.file.buffer);
+      bufferStream.push(null);
+      bufferStream.pipe(uploadStream);
+  
+    } catch (error) {
+      console.error("Error creating Galeri Video:", error);
+      res.status(500).json({ msg: error.message });
+    }
+  };
 
   export const updateGalerivideo = async (req, res) => {
     try {
@@ -106,7 +106,7 @@ export const createGalerivideo = async (req, res) => {
   
         // Unggah gambar baru ke Cloudinary
         const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: 'galerivideo_images' },
+          { folder: 'galeripoto_images' },
           (err, result) => {
             if (err) {
               console.error("Error uploading to Cloudinary:", err);
