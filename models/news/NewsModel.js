@@ -49,7 +49,7 @@ const News = db.define('news', {
         }
     },
     content:{
-        type: DataTypes.TEXT('medium'),
+        type: DataTypes.TEXT('long'),
         allowNull: false,
         validate:{
             notEmpty: true
