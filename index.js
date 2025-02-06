@@ -49,8 +49,8 @@ app.use(express.json());
 })();
 
 // 5. Define unprotected routes
-// app.use(AuthRoute);
-// app.use(TokenRoute);
+app.use(AuthRoute);
+app.use(TokenRoute);
 
 // 6. Apply middleware verification
 
