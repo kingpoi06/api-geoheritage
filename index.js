@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import helmet from "helmet";
 
+import { errorHandler } from "./middleware/errorHandler.js";
 import UserRoute from "./routes/UserRoute.js";
 import AuthRoute from "./routes//login/AuthRoute.js";
 import TokenRoute from "./routes//login/TokenRoute.js"; // Perbarui import ini
@@ -42,6 +43,7 @@ app.use(
 // 3. Use JSON middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(errorHandler);
 
 // 4. Sync database
 (async () => {
